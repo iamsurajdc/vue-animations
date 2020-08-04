@@ -1,28 +1,87 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <h1>Animations</h1>
+        <hr/>
+        <button class="btn btn-primary" @click="showAlert = !showAlert">Show Alert</button>
+        <br><br>
+        <transition name="fade">
+        <div v-if="showAlert" class="alert alert-info">This is some info</div>
+        </transition>
+        <transition name="slide" type="animation">
+        <div v-show="showAlert" class="alert alert-info">This is some info</div>
+        </transition>
+        <transition name="fade" appear="">
+        <div v-if="showAlert" class="alert alert-info">This is some info</div>
+        </transition>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+  data() {
+    return {
+      showAlert: true,
+    };
+  },
+};
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+  .fade-enter {
+    opacity: 0
+  }
+  .fade-enter-active {
+    transition: opacity 1s;
+  }
+  .fade-leave {
+    /* opacity: 1; */
+  }
+  .fade-leave-active {
+    transition: opacity 1s;
+    opacity: 0;
+  }
+  .slide-enter {
+    /* transform: translateY(20px); */
+    opacity: 0;
+  }
+  .slide-enter-active {
+    animation: slide-in 1s ease-out forwards;
+    transition: opacity .5s;
+  }
+  .slide-leave {
+    
+  }
+  .slide-leave-active {
+    animation: slide-out 1s ease-out forwards;
+    transition: opacity 3s;
+    opacity: 0;
+  }
+
+  @keyframes slide-in {
+    from {
+      transform: translateY(20px);
+
+    }
+    to {
+      transform: translateY(0);
+       
+    }
+    
+  }
+    @keyframes slide-out {
+    from {
+      transform: translateY(0px);
+
+    }
+    to {
+      transform: translateY(20px);
+       
+    }
+    
+  }
+
 </style>
