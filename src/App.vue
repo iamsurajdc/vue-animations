@@ -27,15 +27,15 @@
           <div v-else class="alert alert-warning" key="warning">This is some Warning</div>
         </transition>
 
-        <hr style="color: yellow; background-color: chartreuse;">
+        <hr style="color: yellow; background-color: chartreuse;" />
         <button class="btn btn-primary" @click="load = !load">Load/Remove Element</button>
-        <br><br>
+        <br />
+        <br />
         <transition
           @before-enter="berforeEnter"
           @enter="enter"
           @after-enter="afterEnter"
           @enter-cancelled="enterCancelled"
-
           @before-leave="berforeLeave"
           @leave="leave"
           @after-leave="afterLeave"
@@ -44,53 +44,105 @@
         >
           <div style="height:100px; width:100px; background-color: lightgreen" v-if="load"></div>
         </transition>
+
+        <hr />
+
+        <button class="btn btn-primary" @click="addItem">Add Item</button>
+        <br />
+        <br />
+        <ul class="list-group">
+          <li
+            class="list-group-item"
+            v-for="(number, i) in numbers"
+            :key="i+1"
+            @click="removeItem(i)"
+          >{{number}}</li>
+        </ul>
+        <br />
+        <hr />
+        <button
+          class="btn btn-primary"
+          @click="selectedComponent == 'app-success-alert' ? selectedComponent = 'app-danger-alert': selectedComponent = 'app-success-alert'"
+        >Toggle Component</button>  
+        <hr />
+        <transition name="fade" mode="out-in">
+          <component :is="selectedComponent"></component>
+        </transition>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import DangerAlert from "./DangerAlert";
+import SuccessAlert from "./SuccessAlert";
 export default {
   data() {
     return {
       showAlert: false,
-      load: false
+      load: false,
+      elementWidth: 100,
+      selectedComponent: "app-success-alert",
+      numbers: [1, 2, 3, 4, 5],
     };
   },
+  components: {
+    appDangerAlert: DangerAlert,
+    appSuccessAlert: SuccessAlert,
+  },
   methods: {
+    addItem() {
+      this.numbers.push(Math.round(Math.random().toFixed(2) * 100));
+    },
+    removeItem(index) {
+      this.numbers.splice(index, 1);
+    },
     berforeEnter(el) {
-    console.log("berforeEnter -> berforeEnter", el)
+      this.elementWidth = 100;
+      el.style.width = this.elementWidth;
     },
     enter(el, done) {
-      console.log("Enter");
-      done();
-
+      let round = 1;
+      const interval = setInterval(() => {
+        el.style.width = this.elementWidth + round * 10 + `px`;
+        round++;
+        if (round > 20) {
+          clearInterval(interval);
+          done();
+        }
+      }, 20);
     },
     afterEnter(el) {
-    console.log("afterEnter -> el", el);      
+      console.log("afterEnter -> el", el);
     },
     enterCancelled(el) {
-    console.log("enterCancelled -> el", el);
+      console.log("enterCancelled -> el", el);
     },
 
     berforeLeave(el) {
-    console.log("beforeLeave -> el", el)
-
+      console.log("beforeLeave -> el", el);
+      this.elementWidth = 300;
+      el.style.width = this.elementWidth + "px";
     },
     leave(el, done) {
-    console.log("leave -> el", el)
-    done();
+      console.log("leave -> el", el);
+      let round = 1;
+      const interval = setInterval(() => {
+        el.style.width = this.elementWidth - round * 10 + `px`;
+        round++;
+        if (round > 20) {
+          clearInterval(interval);
+          done();
+        }
+      }, 20);
     },
     afterLeave(el) {
-    console.log("afterLeave -> el", el)
-      
+      console.log("afterLeave -> el", el);
     },
     leaveCancelled(el) {
-    console.log("leaveCancelled -> el", el)
-
+      console.log("leaveCancelled -> el", el);
     },
-    
-  }
+  },
 };
 </script>
 
